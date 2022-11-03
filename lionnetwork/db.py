@@ -11,20 +11,24 @@ DB_SERVER = os.environ["DB_SERVER"]
 
 DATABASEURI = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}/proj1part2"
 
-def get_db_connection():
-    if 'db' not in g:
-        engine = create_engine(DATABASEURI)
-        g.db = engine
+engine = create_engine(DATABASEURI)
 
-    return g.db
+def before_request():
+  try:
+    g.conn = engine.connect()
+  except:
+    print ("uh oh, problem connecting to database")
+    import traceback; traceback.print_exc()
+    g.conn = None
 
 
-def close_db():
-    db = g.pop('db', None)
-    if db is not None:
-        db.dispose()
+def teardown_request(exception):
+  try:
+    g.conn.close()
+  except Exception as e:
+    pass
 
 
 def init_app(app):
-    pass
-    # app.teardown_appcontext(close_db)
+    app.before_request(before_request)
+    app.teardown_request(teardown_request)

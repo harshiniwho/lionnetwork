@@ -1,48 +1,35 @@
 import os
 
-from flask import Flask
+from flask import Flask, g
 
-def create_app(test_config=None):
-    # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-    )
+from . import auth, db
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+# create and configure the app
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_mapping(
+    SECRET_KEY='dev', #TODO change to something random for deployment
+)
 
-    # ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
+# ensure the instance folder exists
+try:
+    os.makedirs(app.instance_path)
+except OSError:
+    pass
 
-    from . import db
-    db.init_app(app)
+# setup db 
+db.init_app(app)
 
-    from . import auth
-    app.register_blueprint(auth.bp)
+# register blueprints
+app.register_blueprint(auth.bp)
 
-    @app.route('/')
-    def index():
-        return 'Hello, World!'
+@app.route('/')
+def index():
+    return 'Hello, World!'
 
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-
-    @app.route('/test')
-    def test():
-        connection = db.get_db_connection()
-        cursor = connection.execute("SELECT * FROM PAYMENTS")
-        for row in cursor:
-            print(row)
-        return "test"
-
-
-    return app
+@app.route('/test')
+def test():
+    connection = db.get_db_connection()
+    cursor = g.conn.execute("SELECT * FROM PAYMENTS")
+    for row in cursor:
+        print(row)
+    return "test"

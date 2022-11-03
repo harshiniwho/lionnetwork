@@ -1,11 +1,10 @@
 import functools
 
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
-)
+from flask import (Blueprint, flash, g, redirect, render_template, request,
+                   session, url_for)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from lionnetwork.db import get_db_connection
+# from lionnetwork.db import get_db_connection
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -14,7 +13,6 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db_connection()
         error = None
 
         if not username:
@@ -24,12 +22,10 @@ def register():
 
         if error is None:
             try:
-                
-                db.execute(
+                g.conn.execute(
                     "INSERT INTO test_user (username, password) VALUES (%s, %s)",
                     [username, generate_password_hash(password)],
                 )
-                db.commit()
             except Exception as e:
                 print(e)
                 error = f"User {username} is already registered."
@@ -46,9 +42,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db_connection()
         error = None
-        user = db.execute(
+        user = g.conn.execute(
             'SELECT * FROM test_user WHERE username = %s', [username,]
         ).fetchone()
 
@@ -74,7 +69,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db_connection().execute(
+        g.user = g.conn.execute(
             'SELECT * FROM test_user WHERE id = %s', [user_id,]
         ).fetchone()
 
