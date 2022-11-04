@@ -22,7 +22,7 @@ def index():
 def create():
     if request.method == 'POST':
         name = request.form['name']
-        body = request.form['description']
+        description = request.form['description']
         error = None
 
         if not name:
@@ -32,9 +32,9 @@ def create():
             flash(error)
         else:
             g.conn.execute(
-                'INSERT INTO forums (forum_name, body, author_id)'
+                'INSERT INTO forums (forum_name, description, columbia_uni)'
                 ' VALUES (%s, %s, %s)',
-                [name, body, g.user['id']]
+                [name, description, g.user['id']]
             )
             return redirect(url_for('forums.index'))
 
@@ -65,20 +65,20 @@ def update(id):
     forum = get_forum(id)
 
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
+        name = request.form['forum_name']
+        description = request.form['forum_description']
         error = None
 
-        if not title:
-            error = 'Title is required.'
+        if not name:
+            error = 'Forum name is required.'
 
         if error is not None:
             flash(error)
         else:
             g.conn.execute(
-                'UPDATE post SET title = ?, body = ?'
-                ' WHERE id = ?',
-                (title, body, id)
+                'UPDATE forums SET forum_name = %s, description = %s'
+                ' WHERE forum_id = %s',
+                (name, description, id)
             )
             return redirect(url_for('forums.index'))
 
@@ -88,5 +88,5 @@ def update(id):
 @login_required
 def delete(id):
     get_forum(id)
-    g.conn.execute('DELETE FROM post WHERE id = ?', (id,))
+    g.conn.execute('DELETE FROM forums WHERE forum_id = %s', (id,))
     return redirect(url_for('forums.index'))
