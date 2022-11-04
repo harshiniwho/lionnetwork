@@ -32,16 +32,16 @@ def create():
             flash(error)
         else:
             g.conn.execute(
-                'INSERT INTO forums (forum_name, description, columbia_uni)'
+                'INSERT INTO forums (forum_name, forum_description, columbia_uni)'
                 ' VALUES (%s, %s, %s)',
-                [name, description, g.user['id']]
+                [name, description, g.user['columbia_uni']]
             )
             return redirect(url_for('forums.index'))
 
     return render_template('forums/create.html')
 
 
-def get_forum(id, check_author=True):
+def get_forum(id, check_admin=True):
     forum = g.conn.execute(
         'SELECT *'
         ' FROM forums'
@@ -53,7 +53,7 @@ def get_forum(id, check_author=True):
         abort(404, f"Forum id {id} doesn't exist.")
 
     #TODO modify below check condition for checking if user is admin
-    # if check_author and post['author_id'] != g.user['id']:
+    # if !check_admin:
     #     abort(403)
 
     return forum
@@ -76,13 +76,14 @@ def update(id):
             flash(error)
         else:
             g.conn.execute(
-                'UPDATE forums SET forum_name = %s, description = %s'
+                'UPDATE forums SET forum_name = %s, forum_description = %s'
                 ' WHERE forum_id = %s',
                 (name, description, id)
             )
             return redirect(url_for('forums.index'))
 
     return render_template('forums/update.html', forum=forum)
+
 
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
