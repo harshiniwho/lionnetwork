@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}New Forum{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="forum_id">Forum ID</label>
+    <input name="forum_id" id="forum_id" value="{{ request.form['forum_id'] }}" required><br>
+    <label for="forum_name">Forum Name</label>
+    <input name="name" id="name" value="{{ request.form['forum_name'] }}" required><br>
+    <label for="forum_description">Forum Description</label>
+    <textarea name="forum_description" id="forum_description">{{ request.form['description'] }}</textarea><br>
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}

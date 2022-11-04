@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, g
 
-from . import auth, db
+from . import auth, db, forums
 
 # create and configure the app
 app = Flask(__name__, instance_relative_config=True)
@@ -21,6 +21,7 @@ db.init_app(app)
 
 # register blueprints
 app.register_blueprint(auth.bp)
+app.register_blueprint(forums.bp)
 
 @app.route('/')
 def index():

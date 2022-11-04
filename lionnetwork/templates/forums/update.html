@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit "{{ forum['forum_name'] }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="forum_name">Forum Name</label>
+    <input name="forum_name" id="forum_name"
+      value="{{ request.form['forum_name'] or forum['forum_name'] }}" required>
+      <br>
+    <label for="forum_description">Description</label>
+    <textarea name="forum_description" id="forum_description">{{ request.form['description'] or forum['forum_description'] }}</textarea>
+    <br>
+    <input type="submit" value="Save">
+  </form>
+  <hr>
+  <form action="{{ url_for('forums.delete', id=forum['forum_id']) }}" method="post">
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+  </form>
+{% endblock %}
