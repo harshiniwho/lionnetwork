@@ -1,12 +1,11 @@
 import functools
-
 from flask import (Blueprint, flash, g, redirect, render_template, request,
                    session, url_for)
 from werkzeug.security import check_password_hash, generate_password_hash
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+auth = Blueprint('auth', __name__)
 
-@bp.route('/register', methods=('GET', 'POST'))
+@auth.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
         columbia_uni = request.form['columbia_uni']
@@ -53,7 +52,7 @@ def register():
     return render_template('auth/register.html')
 
 
-@bp.route('/login', methods=('GET', 'POST'))
+@auth.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
         columbia_uni = request.form['columbia_uni']
@@ -71,14 +70,14 @@ def login():
         if error is None:
             session.clear()
             session['columbia_uni'] = user['columbia_uni']
-            return redirect(url_for('index'))
-
+            return redirect(url_for('user.home'))
+        print(error)
         flash(error)
 
     return render_template('auth/login.html')
 
 
-@bp.before_app_request
+@auth.before_app_request
 def load_logged_in_user():
     columbia_uni = session.get('columbia_uni')
 
@@ -90,7 +89,7 @@ def load_logged_in_user():
         ).fetchone()
 
 
-@bp.route('/logout')
+@auth.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))

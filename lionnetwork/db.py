@@ -1,17 +1,14 @@
+from decouple import config
 import os
-
 from flask import current_app, g
 from sqlalchemy import *
 
-DB_USER = os.environ["DB_USER"]
-DB_PASSWORD = os.environ["DB_PASSWORD"]
-
-DB_SERVER = os.environ["DB_SERVER"]
-
+DB_USER = config('DB_USER')
+DB_PASSWORD = config('DB_PASSWORD')
+DB_SERVER = config('DB_SERVER')
 DATABASEURI = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}/proj1part2"
 
 engine = create_engine(DATABASEURI)
-
 
 def before_request():
   try:
