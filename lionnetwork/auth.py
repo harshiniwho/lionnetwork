@@ -42,14 +42,16 @@ def register():
                         "INSERT INTO users (columbia_uni, password) VALUES (%s, %s)",
                         [columbia_uni, generate_password_hash(password)],
                     )
-            except Exception as e:
-                error = f"User {columbia_uni} is already registered."
-            else:
+
                 return redirect(url_for("auth.login"))
 
-        flash(error)
+            except Exception as e:
+                error = f"User {columbia_uni} is already registered."
 
-    return render_template('auth/register.html')
+        flash(error, category="error")
+
+    elif request.method == 'GET':
+        return render_template('auth/register.html')
 
 
 @auth.route('/login', methods=('GET', 'POST'))
@@ -70,11 +72,18 @@ def login():
         if error is None:
             session.clear()
             session['columbia_uni'] = user['columbia_uni']
+            session['major'] = user['major']
+            # session['listing_access'] = user['has_job_listings_access']
+            session['listing_access'] = True
+            session['deactivated'] = user['is_deactivated']
+            session['is_admin'] = user['is_admin']
+            flash("Logged in Successfully!", category="success")
             return redirect(url_for('user.home'))
-        print(error)
-        flash(error)
+        else:
+            flash(error, category="error")
 
-    return render_template('auth/login.html')
+    elif request.method == 'GET':
+        return render_template('auth/login.html')
 
 
 @auth.before_app_request
@@ -92,7 +101,7 @@ def load_logged_in_user():
 @auth.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('views.index'))
 
 
 def login_required(view):

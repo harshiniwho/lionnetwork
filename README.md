@@ -1,5 +1,5 @@
 # Lion Network - W4111 Project 1
-Harshini Ramanujam - hr2358
+Harshini Ramanujam - hr2358 <br />
 Donghan Kim - dk3245
 
 # Developer references:

@@ -3,8 +3,9 @@ from lionnetwork import start_app
 
 
 """
-TODO (by friday):
-2. integrate forum page
+TODO:
+1. fix job listing page, specifically drop-down menu
+2. add payment feature
 """
 
 if __name__ == '__main__':

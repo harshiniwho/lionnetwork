@@ -10,10 +10,12 @@
             popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system,
             extensive prebuilt components, and powerful JavaScript plugins.</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-            <button type="button" class="btn btn-outline-primary me-2 btn-lg"
-                onclick="window.location.href='{{ url_for( 'auth.login') }}';">Login</button>
-            <button type="button" class="btn btn-outline-primary me-2 btn-lg"
-                onclick="window.location.href='{{ url_for( 'auth.register') }}';">Sign Up</button>
+            <a href="{{ url_for('auth.login')}}">
+                <button type="button" class="btn btn-outline-primary me-2 btn-lg">Login</button>
+            </a>
+            <a href="{{ url_for('auth.register')}}">
+                <button type="button" class="btn btn-outline-primary me-2 btn-lg">Sign Up</button>
+            </a>
         </div>
     </div>
     <div class="overflow-hidden" style="max-height: 40vh;">

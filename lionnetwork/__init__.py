@@ -3,6 +3,7 @@ from flask import Flask, g
 from . import auth, db, forums
 from .views import views
 from .auth import auth
+from .user import user
 
 # init application
 def start_app():
@@ -17,9 +18,9 @@ def start_app():
 
     db.init_app(app)
     app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(user, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
     return app
-
 
 """
 @app.route('/test')
