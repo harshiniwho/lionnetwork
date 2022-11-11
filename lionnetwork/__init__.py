@@ -1,32 +1,28 @@
 import os
-
 from flask import Flask, g
-
 from . import auth, db, forums
+from .views import views
+from .auth import auth
+from .user import user
 
-# create and configure the app
-app = Flask(__name__, instance_relative_config=True)
-app.config.from_mapping(
-    SECRET_KEY='dev', #TODO change to something random for deployment
-)
+# init application
+def start_app():
+    app = Flask(__name__, instance_relative_config=True)
+    app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
 
-# ensure the instance folder exists
-try:
-    os.makedirs(app.instance_path)
-except OSError:
-    pass
+    # not sure what this is for?
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
 
-# setup db 
-db.init_app(app)
+    db.init_app(app)
+    app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(user, url_prefix='/')
+    app.register_blueprint(auth, url_prefix='/auth')
+    return app
 
-# register blueprints
-app.register_blueprint(auth.bp)
-app.register_blueprint(forums.bp)
-
-@app.route('/')
-def index():
-    return 'Hello, World!'
-
+"""
 @app.route('/test')
 def test():
     connection = db.get_db_connection()
@@ -34,3 +30,4 @@ def test():
     for row in cursor:
         print(row)
     return "test"
+"""

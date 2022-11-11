@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    {% if session['listing_access'] and jobList|length > 0 %}
+        <style>
+            td,
+            tr {
+                text-align: center;
+                vertical-align: middle;
+            }
+        </style>
+        <h5>Showing {{ jobList|length }} Job Listings</h5>
+        <br />
+        <form method = "post">
+            <select id="industry" onchange="this.form.submit()">
+                <option>Industry 1</option>
+                <option>Industry 2</option>
+                <option>Industry 3</option>
+                <option>Industry 4</option>
+                <option>Industry 5</option>
+                <option>Industry 6</option>
+                <option>Industry 7</option>
+            </select>
+        </form>
+        <br />
+
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr class = "table-primary">
+                    <th>Company</th>
+                    <th>Industry</th>
+                    <th>Position</th>
+                    <th>Internship</th>
+                    <th>Visa Sponsored</th>
+                    <th>deadline</th>
+                    <th>Application URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in jobList %}
+                    {% if row[7] %}
+                        <tr>
+                            <td>{{row[1]}}</td>
+                            <td>{{row[9]}}</td>
+                            <td>{{row[2]}}</td>
+                            <td>{{row[5]}}</td>
+                            <td>{{row[3]}}</td>
+                            <td>{{row[6]}}</td>
+                            <td><a href="{{row[4]}}">Link</a></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <div class = "container">
+            <div class="jumbotron">
+                <h1 class="display-4">Access Denied...</h1>
+                <p class="lead">You need to make a small donnation to view the job listings. Job listings are provided by fellow Columbia University students, and are frequently maintained to make sure the most accurate information is available at all times!</p>
+                <hr class="my-4">
+                <a class="btn btn-primary btn-lg" href="{{ url_for('views.payment') }}" role="button">Make Donation</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+
+
