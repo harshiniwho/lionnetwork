@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}About Post{% endblock %}
+
+{% block content %}
+<h3>Post</h3>
+<div>
+    {{post.post_text}}
+</div>
+<br>
+<h5>Comments</h5>
+{% for comment in comments %}
+    <div>
+        {{comment.poster}} said
+        {{comment.comment_text}}
+    </div>
+{% endfor %}
+
+{% endblock %}

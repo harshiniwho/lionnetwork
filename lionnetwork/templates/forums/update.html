@@ -1,22 +1,24 @@
 {% extends 'base.html' %}
-
-{% block header %}
-  <h1>{% block title %}Edit "{{ forum['forum_name'] }}"{% endblock %}</h1>
-{% endblock %}
+{% block title %}Edit "{{ forum['forum_name'] }}"{% endblock %}
 
 {% block content %}
+  <h4>Edit "{{ forum['forum_name'] }}"</h4>
   <form method="post">
-    <label for="forum_name">Forum Name</label>
-    <input name="forum_name" id="forum_name"
-      value="{{ request.form['forum_name'] or forum['forum_name'] }}" required>
-      <br>
-    <label for="forum_description">Description</label>
-    <textarea name="forum_description" id="forum_description">{{ request.form['description'] or forum['forum_description'] }}</textarea>
-    <br>
-    <input type="submit" value="Save">
+    <div class="mb-3">
+      <label class="form-label" for="forum_name">Forum Name</label>
+      <input class="form-control" name="forum_name" id="forum_name"
+        value="{{ request.form['forum_name'] or forum['forum_name'] }}" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="forum_description">Description</label>
+      <textarea class="form-control" name="forum_description" id="forum_description">{{ request.form['description'] or forum['forum_description'] }}</textarea>
+    </div>
+    
+    <input type="submit" class="btn btn-primary" value="Submit">   
   </form>
-  <hr>
-  <form action="{{ url_for('forums.delete', id=forum['forum_id']) }}" method="post">
-    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
-  </form>
+  <br>
+  <a href="{{ url_for('forums.index')}}">
+    <button class="btn btn-primary">Cancel</button>
+  </a>
+
 {% endblock %}

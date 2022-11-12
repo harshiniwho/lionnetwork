@@ -1,23 +1,24 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, session
 )
 from werkzeug.exceptions import abort
 
 from lionnetwork.auth import login_required
 
-bp = Blueprint('forums', __name__, url_prefix='/forums')
+forums = Blueprint('forums', __name__, url_prefix='/forums')
 
-@bp.route('/')
+@forums.route('/')
 def index():
     forums = g.conn.execute(
         'SELECT *'
         ' FROM forums'
         ' ORDER BY forum_name'
     ).fetchall()
+    session['forum_id'] = ""
     return render_template('forums/index.html', forums=forums)
 
 
-@bp.route('/create', methods=('GET', 'POST'))
+@forums.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
     if request.method == 'POST':
@@ -59,7 +60,7 @@ def get_forum(id, check_admin=True):
     return forum
 
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@forums.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
     forum = get_forum(id)
@@ -85,9 +86,10 @@ def update(id):
     return render_template('forums/update.html', forum=forum)
 
 
-@bp.route('/<int:id>/delete', methods=('POST',))
+@forums.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
     get_forum(id)
+    # enabled cascaded deletes for comments and posts
     g.conn.execute('DELETE FROM forums WHERE forum_id = %s', (id,))
     return redirect(url_for('forums.index'))

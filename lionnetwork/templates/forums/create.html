@@ -1,17 +1,25 @@
 {% extends 'base.html' %}
-
-{% block header %}
-  <h1>{% block title %}New Forum{% endblock %}</h1>
-{% endblock %}
+{% block title %}New Forum{% endblock %}
 
 {% block content %}
+  <h4>Create New Forum</h4>
   <form method="post">
-    <label for="forum_id">Forum ID</label>
-    <input name="forum_id" id="forum_id" value="{{ request.form['forum_id'] }}" required><br>
-    <label for="forum_name">Forum Name</label>
-    <input name="name" id="name" value="{{ request.form['forum_name'] }}" required><br>
-    <label for="forum_description">Forum Description</label>
-    <textarea name="forum_description" id="forum_description">{{ request.form['description'] }}</textarea><br>
-    <input type="submit" value="Save">
+    <div class="mb-3">
+      <label for="forum_id" class="form-label">Forum ID</label>
+      <input name="forum_id" id="forum_id" value="{{ request.form['forum_id'] }}" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="forum_name" class="form-label">Forum Name</label>
+      <input name="name" id="name" value="{{ request.form['forum_name'] }}" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="forum_description" class="form-label">Forum Description</label>
+      <textarea name="forum_description" class="form-control"  id="forum_description">{{ request.form['description'] }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+  <br>
+  <a href="{{ url_for('forums.index')}}">
+    <button class="btn btn-primary">Cancel</button>
+  </a>
 {% endblock %}
