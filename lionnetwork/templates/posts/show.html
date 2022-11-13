@@ -13,6 +13,18 @@
         {{comment.poster}} said
         {{comment.comment_text}}
     </div>
+    <form action="{{ url_for('posts.comment_delete', id=comment['comment_id']) }}" method="post">
+        <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+      </form>
 {% endfor %}
-
+<form method="post" action="{{ url_for('posts.comment', id=post['post_id']) }}">
+    <div class="mb-3">
+      <textarea name="comment_text" id="comment_text" value="{{ request.form['comment_text'] }}" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Comment</button>
+  </form>
+<br>
+<a href="{{ url_for('posts.index', id=session['forum_id']) }}">
+    <button class="btn btn-primary">Back</button>
+</a>
 {% endblock %}

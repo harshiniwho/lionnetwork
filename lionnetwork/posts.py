@@ -7,6 +7,7 @@ from lionnetwork.auth import login_required
 
 posts = Blueprint('posts', __name__, url_prefix='/posts')
 
+
 def get_forum(id):
     forum = g.conn.execute(
         'SELECT *'
@@ -19,6 +20,7 @@ def get_forum(id):
         abort(404, f"Forum id {id} doesn't exist.")
 
     return forum['forum_name']
+
 
 @posts.route('/<int:id>', methods=('GET',))
 @login_required
@@ -35,7 +37,6 @@ def index(id):
 def create():
     if request.method == 'POST':
         post_text = request.form['post_text']
-        post_id = request.form['post_id']
         forum_id = session['forum_id']
         if forum_id == None:
             flash("Invalid state!")
@@ -49,13 +50,14 @@ def create():
             flash(error)
         else:
             g.conn.execute(
-                'INSERT INTO posts (post_id, forum_id, post_text, columbia_uni, timestamp_posted)'
-                ' VALUES (%s, %s, %s, %s)',
-                [post_id, forum_id, post_text, g.user['columbia_uni'], ]
+                'INSERT INTO posts (forum_id, post_text, columbia_uni)'
+                ' VALUES (%s, %s, %s)',
+                [forum_id, post_text, g.user['columbia_uni'], ]
             )
             return redirect(url_for('posts.index', id=session['forum_id']))
 
     return render_template('posts/create.html')
+
 
 def get_post(id):
     post = g.conn.execute(
@@ -71,14 +73,48 @@ def get_post(id):
     return post
 
 
+def get_comment(id):
+    comment = g.conn.execute(
+        'SELECT *'
+        ' FROM comments'
+        ' WHERE comment_id = %s',
+        [id,]
+    ).fetchone()
+
+    if comment is None:
+        abort(404, f"Comment id {id} doesn't exist.")
+
+    return comment
+
+
 @posts.route('/view/<int:id>', methods=('GET',))
 def show(id):
-    print("in here?")
     post = get_post(id)
     comments = g.conn.execute(
-        'SELECT c.comment_text, c.timestamp_posted, c.columbia_uni as poster FROM comments c JOIN posts p on c.post_id = p.post_id and c.forum_id = p.forum_id WHERE p.post_id = %s and p.forum_id = %s', (id, session['forum_id'])
+        'SELECT c.comment_id, c.comment_text, c.timestamp_posted, c.columbia_uni as poster FROM comments c JOIN posts p on c.post_id = p.post_id and c.forum_id = p.forum_id WHERE p.post_id = %s and p.forum_id = %s', (id, session['forum_id'])
     ).fetchall()
     return render_template('posts/show.html', post=post, comments=comments)
+
+
+@posts.route('/<int:id>/comment', methods=('POST',))
+@login_required
+def comment(id):
+    comment_text = request.form['comment_text']
+    g.conn.execute(
+        'INSERT INTO comments (forum_id, post_id, comment_text, columbia_uni)'
+        ' VALUES (%s, %s, %s, %s)',
+        [session["forum_id"], id, comment_text, g.user['columbia_uni'], ]
+    )
+    return redirect(url_for('posts.show', id=id))
+
+
+@posts.route('/<int:id>/comment/delete', methods=('POST',))
+@login_required
+def comment_delete(id):
+    print("in here?")
+    comment = get_comment(id)
+    g.conn.execute('DELETE FROM comments WHERE comment_id = %s', (id,))
+    return redirect(url_for('posts.show', id=comment['post_id']))
 
 
 @posts.route('/<int:id>/update', methods=('GET', 'POST'))
@@ -86,20 +122,19 @@ def show(id):
 def update(id):
     post = get_post(id)
     if request.method == 'POST':
-        name = request.form['forum_name']
-        description = request.form['forum_description']
+        post_text = request.form['post_text']
         error = None
 
-        if not name:
-            error = 'Forum name is required.'
+        if not post_text:
+            error = 'Post text is required.'
 
         if error is not None:
             flash(error)
         else:
             g.conn.execute(
-                'UPDATE forums SET forum_name = %s, forum_description = %s'
-                ' WHERE forum_id = %s',
-                (name, description, id)
+                'UPDATE posts SET post_text = %s'
+                ' WHERE post_id = %s AND forum_id = %s',
+                (post_text, id, session['forum_id'])
             )
             return redirect(url_for('posts.index', id=session['forum_id']))
     return render_template('posts/update.html', post=post)

@@ -5,10 +5,6 @@
   <h4>Create New Post for {{forum_name}}</h4>
   <form method="post">
     <div class="mb-3">
-      <label for="post_id" class="form-label">Post ID</label>
-      <input name="post_id" id="post_id" value="{{ request.form['post_id'] }}" class="form-control" required>
-    </div>
-    <div class="mb-3">
       <label for="post_text" class="form-label">Post</label>
       <textarea name="post_text" id="post_text" value="{{ request.form['post_text'] }}" class="form-control" required></textarea>
     </div>

@@ -5,16 +5,23 @@
   <h4>Create New Forum</h4>
   <form method="post">
     <div class="mb-3">
-      <label for="forum_id" class="form-label">Forum ID</label>
-      <input name="forum_id" id="forum_id" value="{{ request.form['forum_id'] }}" class="form-control" required>
-    </div>
-    <div class="mb-3">
+      
       <label for="forum_name" class="form-label">Forum Name</label>
-      <input name="name" id="name" value="{{ request.form['forum_name'] }}" class="form-control" required>
+      <input type="text" class="form-control" name="forum_name" id="forum_name" required>
+  
     </div>
     <div class="mb-3">
       <label for="forum_description" class="form-label">Forum Description</label>
-      <textarea name="forum_description" class="form-control"  id="forum_description">{{ request.form['description'] }}</textarea>
+      <textarea name="forum_description" class="form-control" >{{ request.form['forum_description'] }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="industry_id" class="form-label">Industry Name</label>
+      <select name="industry_id" id="industry_id" class="form-select">
+        {% for industry in industries %}
+          request.form['industry_id']=
+          <option name="industry_id" value="{{industry.industry_id}}">{{industry.industry_name}}</option>
+        {% endfor %}
+      </select>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

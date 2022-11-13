@@ -13,6 +13,16 @@
       <label class="form-label" for="forum_description">Description</label>
       <textarea class="form-control" name="forum_description" id="forum_description">{{ request.form['description'] or forum['forum_description'] }}</textarea>
     </div>
+    <div class="mb-3">
+      <label for="industry_id" class="form-label">Industry Name</label>
+      <select name="industry_id" id="industry_id" class="form-select">
+        <option selected>{{ request.form['forum_name'] or forum['industry_name'] }}</option>
+        {% for industry in industries %}
+          request.form['industry_id']=
+          <option name="industry_id" value="{{industry.industry_id}}">{{industry.industry_name}}</option>
+        {% endfor %}
+      </select>
+    </div>
     
     <input type="submit" class="btn btn-primary" value="Submit">   
   </form>
