@@ -27,7 +27,7 @@ def get_forum(id):
 def index(id):
     forum_name = get_forum(id)
     session['forum_id'] = id
-    posts = g.conn.execute('SELECT p.post_id, p.post_text, p.timestamp_posted, p.columbia_uni, f.forum_id, f.forum_name FROM posts p JOIN forums f on p.forum_id = f.forum_id WHERE f.forum_id = %s', (id,)).fetchall()
+    posts = g.conn.execute("SELECT p.post_id, p.post_text, to_char(timestamp_posted, 'Day DD Mon YYYY') as timestamp_posted, p.columbia_uni, f.forum_id, f.forum_name FROM posts p JOIN forums f on p.forum_id = f.forum_id WHERE f.forum_id = %s", (id,)).fetchall()
     
     return render_template('posts/index.html', posts=posts, forum_name=forum_name)
 
@@ -61,8 +61,8 @@ def create():
 
 def get_post(id):
     post = g.conn.execute(
-        'SELECT *'
-        ' FROM posts'
+        "SELECT post_id, forum_id, post_text, to_char(timestamp_posted, 'Day DD Mon YYYY') as timestamp_posted, p.columbia_uni, u.name"
+        ' FROM posts p JOIN users u ON p.columbia_uni = u.columbia_uni'
         ' WHERE post_id = %s',
         [id,]
     ).fetchone()
@@ -91,7 +91,7 @@ def get_comment(id):
 def show(id):
     post = get_post(id)
     comments = g.conn.execute(
-        'SELECT c.comment_id, c.comment_text, c.timestamp_posted, c.columbia_uni as poster FROM comments c JOIN posts p on c.post_id = p.post_id and c.forum_id = p.forum_id WHERE p.post_id = %s and p.forum_id = %s', (id, session['forum_id'])
+        "SELECT c.comment_id, c.comment_text, to_char(c.timestamp_posted, 'Day DD Mon YYYY') as timestamp_posted, c.columbia_uni as poster, u.name as name FROM comments c JOIN posts p on c.post_id = p.post_id and c.forum_id = p.forum_id JOIN users u on c.columbia_uni = u.columbia_uni WHERE p.post_id = %s and p.forum_id = %s", (id, session['forum_id'])
     ).fetchall()
     return render_template('posts/show.html', post=post, comments=comments)
 

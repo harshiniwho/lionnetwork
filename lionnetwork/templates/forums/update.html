@@ -2,6 +2,9 @@
 {% block title %}Edit "{{ forum['forum_name'] }}"{% endblock %}
 
 {% block content %}
+<a href="{{ url_for('forums.index')}}">
+  <button class="btn btn-primary" style="float: right;">Back</button>
+</a>
   <h4>Edit "{{ forum['forum_name'] }}"</h4>
   <form method="post">
     <div class="mb-3">
@@ -16,7 +19,7 @@
     <div class="mb-3">
       <label for="industry_id" class="form-label">Industry Name</label>
       <select name="industry_id" id="industry_id" class="form-select">
-        <option selected>{{ request.form['forum_name'] or forum['industry_name'] }}</option>
+        request.form['industry_id']=<option selected value="{{forum.industry_id}}">{{ forum['industry_name'] }}</option>
         {% for industry in industries %}
           request.form['industry_id']=
           <option name="industry_id" value="{{industry.industry_id}}">{{industry.industry_name}}</option>
@@ -26,9 +29,5 @@
     
     <input type="submit" class="btn btn-primary" value="Submit">   
   </form>
-  <br>
-  <a href="{{ url_for('forums.index')}}">
-    <button class="btn btn-primary">Cancel</button>
-  </a>
 
 {% endblock %}

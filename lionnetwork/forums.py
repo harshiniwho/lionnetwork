@@ -18,7 +18,7 @@ def fetch_industries():
 @forums.route('/')
 def index():
     forums = g.conn.execute(
-        'SELECT f.forum_id, f.forum_name, f.forum_description, f.columbia_uni, i.industry_name'
+        'SELECT f.forum_id, f.forum_name, f.forum_description, f.columbia_uni, i.industry_name, f.hide_forum '
         ' FROM forums f join industries i on f.industry_id = i.industry_id'
         ' ORDER BY forum_name'
     ).fetchall()
@@ -59,7 +59,7 @@ def create():
 
 def get_forum(id, check_admin=True):
     forum = g.conn.execute(
-        'SELECT f.forum_id, f.forum_name, f.forum_description, f.columbia_uni, i.industry_name'
+        'SELECT f.forum_id, f.forum_name, f.forum_description, f.hide_forum, f.columbia_uni, i.industry_name, i.industry_id'
         ' FROM forums f join industries i on f.industry_id = i.industry_id'
         ' WHERE f.forum_id = %s',
         [id,]
@@ -74,6 +74,9 @@ def get_forum(id, check_admin=True):
 @forums.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
+    if not g.user.is_admin:
+        abort(403, f"User does not have permission for this action")
+
     forum = get_forum(id)
 
     if request.method == 'POST':
@@ -101,7 +104,26 @@ def update(id):
 @forums.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_forum(id)
+    if not g.user.is_admin:
+        abort(403, f"User does not have permission for this action")
     # enabled cascaded deletes for comments and posts
     g.conn.execute('DELETE FROM forums WHERE forum_id = %s', (id,))
+    return redirect(url_for('forums.index'))
+
+
+@forums.route('/<int:id>/hide', methods=('POST',))
+@login_required
+def hide(id):
+    if not g.user.is_admin:
+        abort(403, f"User does not have permission for this action")
+    g.conn.execute('UPDATE forums SET hide_forum = True WHERE forum_id = %s', (id,))
+    return redirect(url_for('forums.index'))
+
+
+@forums.route('/<int:id>/expose', methods=('POST',))
+@login_required
+def expose(id):
+    if not g.user.is_admin:
+        abort(403, f"User does not have permission for this action")
+    g.conn.execute('UPDATE forums SET hide_forum = False WHERE forum_id = %s', (id,))
     return redirect(url_for('forums.index'))

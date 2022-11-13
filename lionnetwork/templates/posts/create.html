@@ -2,6 +2,10 @@
 {% block title %}New Post{% endblock %}
 
 {% block content %}
+
+<a href="{{ url_for('posts.index', id=session['forum_id']) }}">
+  <button class="btn btn-primary" style="float: right;">Back</button>
+</a>
   <h4>Create New Post for {{forum_name}}</h4>
   <form method="post">
     <div class="mb-3">
@@ -10,8 +14,4 @@
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
-  <br>
-  <a href="{{ url_for('posts.index', id=session['forum_id']) }}">
-    <button class="btn btn-primary">Cancel</button>
-  </a>
 {% endblock %}

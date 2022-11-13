@@ -2,29 +2,39 @@
 {% block title %}About Post{% endblock %}
 
 {% block content %}
-<h3>Post</h3>
+<a href="{{ url_for('posts.index', id=session['forum_id']) }}">
+    <button class="btn btn-primary" style="float: right;">Back</button>
+</a>
+<h3>Post created by {{post.name}} ({{post.columbia_uni}}) at {{post.timestamp_posted}}</h3>
 <div>
     {{post.post_text}}
 </div>
 <br>
 <h5>Comments</h5>
-{% for comment in comments %}
-    <div>
-        {{comment.poster}} said
-        {{comment.comment_text}}
-    </div>
-    <form action="{{ url_for('posts.comment_delete', id=comment['comment_id']) }}" method="post">
-        <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
-      </form>
-{% endfor %}
+<table class="table table-borderless">
+    <tbody>
+    {% for comment in comments %}
+    <tr>
+        <td>{{comment.timestamp_posted}}</td>
+        <td>{{comment.name}} ({{comment.poster}}) </td> 
+        <td>{{comment.comment_text}}</td>
+        <td>
+            {% if g.user.is_admin or g.user.columbia_uni == comment['poster'] %}
+                <form action="{{ url_for('posts.comment_delete', id=comment['comment_id']) }}" method="post">
+                    <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
 <form method="post" action="{{ url_for('posts.comment', id=post['post_id']) }}">
     <div class="mb-3">
       <textarea name="comment_text" id="comment_text" value="{{ request.form['comment_text'] }}" class="form-control" required></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Add Comment</button>
-  </form>
-<br>
-<a href="{{ url_for('posts.index', id=session['forum_id']) }}">
-    <button class="btn btn-primary">Back</button>
-</a>
+</form>
 {% endblock %}

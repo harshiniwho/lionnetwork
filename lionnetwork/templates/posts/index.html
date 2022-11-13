@@ -2,9 +2,10 @@
 {% block title %}Posts for forum{% endblock %}
 
 {% block content %}
+<a href="{{ url_for('forums.index')}}"><button type="button" class="btn btn-primary me-2" style="float: right;">Back</button></a>
+<a href="{{ url_for('posts.create')}}"><button type="button" class="btn btn-outline-primary me-2" style="float: right;">Create New Post</button></a>
 <h5>Showing all post of {{forum_name}}</h5>
-<a href="{{ url_for('posts.create')}}"><button type="button" class="btn btn-outline-primary me-2">Create New Post</button></a>
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top: 2%;">
     <style>
       td,
       tr {
@@ -19,8 +20,11 @@
             <td>
               {{ post['post_text'] }}
             </td>
+            <td>
+              {{ post['timestamp_posted'] }}
+            </td>
             <td><a href="{{ url_for('posts.show', id=post['post_id']) }}"> View More </a></td>
-            {% if g.user.is_admin %}
+            {% if g.user.is_admin or g.user.columbia_uni == post['columbia_uni'] %}
             <td>
               <a  href="{{ url_for('posts.update', id=post['post_id']) }}">Edit</a>
             </td>
