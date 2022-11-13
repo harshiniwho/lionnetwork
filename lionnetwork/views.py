@@ -13,6 +13,3 @@ def index():
 def payment():
     return render_template("payment.html")
 
-@views.route('/forum')
-def forum():
-    return render_template('forums/index.html')

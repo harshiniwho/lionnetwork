@@ -1,25 +1,73 @@
 {% extends 'base.html' %}
-
-{% block header %}
-  <h1>{% block title %}Forums{% endblock %}</h1>
-  {% if g.user %}
-    <a class="action" href="{{ url_for('forums.create') }}">New</a>
-  {% endif %}
-{% endblock %}
+{% block title %}Forums{% endblock %}
 
 {% block content %}
-  {% for forum in forums %}
-    <article class="post">
-      <header>
-        <div>
-          <h1>{{ forum['forum_name'] }}</h1>
-          <div class="about"> {{ forum['forum_description'] }}</div>
-        </div>
-          <a class="action" href="{{ url_for('forums.update', id=forum['forum_id']) }}">Edit</a>
-      </header>
-    </article>
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
-  {% endfor %}
+
+{% if g.user.is_admin %}
+<a href="{{ url_for('forums.create')}}"><button type="button" class="btn btn-outline-primary me-2" style="float: right;">Create New Forum</button></a>
+{% endif %}
+<h5>Showing all forums</h5>
+  <form method="post" action="{{ url_for('forums.index') }}">
+    <div class="mb3">
+      <input name="forum_search" id="forum_search" value="{{ request.form['forum_search'] }}" class="form-control">
+    </div>
+    <div class="mb3">
+      <button type="submit" class="btn btn-primary" style="margin-top : 1%">Search!</button>
+    </div>
+    
+  </form>
+  {% if flag_search %}
+    <a href="{{ url_for('forums.index')}}">
+      <button class="btn btn-outline-primary" style="float: left; margin-left: 10%; margin-top: -2.8%">Clear Search</button>
+    </a>
+  {% endif %}
+  <div class="container-fluid" style="margin-top: 2%;">
+    <style>
+      td,
+      tr {
+          text-align: start;
+          vertical-align: middle;
+      }
+    </style>
+    <table class="table table-hover table-borderless">
+      <tbody>
+        {% for forum in forums %}
+          {% if not forum.hide_forum or g.user.is_admin %}
+          <tr>
+            <td><a href="{{ url_for('posts.index', id=forum['forum_id']) }}"> {{ forum['forum_name'] }} </a></td>
+            <td>
+              {{ forum['forum_description'] }}
+            </td>
+            <td>
+              {{ forum['industry_name'] }}
+            </td>
+            {% if g.user.is_admin %}
+            <td>
+              <a  href="{{ url_for('forums.update', id=forum['forum_id']) }}">Edit</a>
+            </td>
+            <td>
+              {% if forum.hide_forum %}
+                <form action="{{ url_for('forums.expose', id=forum['forum_id']) }}" method="post">
+                  <input class="btn btn-primary" type="submit" value="Expose" onclick="return confirm('Are you sure?');">
+                </form>
+              {% else %}
+                <form action="{{ url_for('forums.hide', id=forum['forum_id']) }}" method="post">
+                  <input class="btn btn-primary" type="submit" value="Hide" onclick="return confirm('Are you sure?');">
+                </form>
+              {% endif %}
+            </td>
+            <td>
+              <form action="{{ url_for('forums.delete', id=forum['forum_id']) }}" method="post">
+                <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+              </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endif %}
+        {% endfor %}
+        
+      </tbody>
+    </table>
+  </div>
+
 {% endblock %}

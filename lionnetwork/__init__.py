@@ -4,6 +4,8 @@ from . import auth, db, forums
 from .views import views
 from .auth import auth
 from .user import user
+from .forums import forums
+from .posts import posts
 
 # init application
 def start_app():
@@ -20,14 +22,7 @@ def start_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(user, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
-    return app
 
-"""
-@app.route('/test')
-def test():
-    connection = db.get_db_connection()
-    cursor = g.conn.execute("SELECT * FROM PAYMENTS")
-    for row in cursor:
-        print(row)
-    return "test"
-"""
+    app.register_blueprint(forums)
+    app.register_blueprint(posts)
+    return app

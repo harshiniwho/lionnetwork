@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Posts for forum{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('forums.index')}}"><button type="button" class="btn btn-primary me-2" style="float: right;">Back</button></a>
+<a href="{{ url_for('posts.create')}}"><button type="button" class="btn btn-outline-primary me-2" style="float: right;">Create New Post</button></a>
+<h5>Showing all post of {{forum_name}}</h5>
+<div class="container-fluid" style="margin-top: 2%;">
+    <style>
+      td,
+      tr {
+          text-align: start;
+          vertical-align: middle;
+      }
+    </style>
+    <table class="table table-hover table-borderles">
+      <tbody>
+        {% for post in posts %}
+          <tr>
+            <td>
+              {{ post['post_text'] }}
+            </td>
+            <td>
+              {{ post['timestamp_posted'] }}
+            </td>
+            <td><a href="{{ url_for('posts.show', id=post['post_id']) }}"> View More </a></td>
+            {% if g.user.is_admin or g.user.columbia_uni == post['columbia_uni'] %}
+            <td>
+              <a  href="{{ url_for('posts.update', id=post['post_id']) }}">Edit</a>
+            </td>
+            <td>
+              <form action="{{ url_for('posts.delete', id=post['post_id']) }}" method="post">
+                <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+              </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+    
+{% endblock %}

@@ -1,22 +1,33 @@
 {% extends 'base.html' %}
-
-{% block header %}
-  <h1>{% block title %}Edit "{{ forum['forum_name'] }}"{% endblock %}</h1>
-{% endblock %}
+{% block title %}Edit "{{ forum['forum_name'] }}"{% endblock %}
 
 {% block content %}
+<a href="{{ url_for('forums.index')}}">
+  <button class="btn btn-primary" style="float: right;">Back</button>
+</a>
+  <h4>Edit "{{ forum['forum_name'] }}"</h4>
   <form method="post">
-    <label for="forum_name">Forum Name</label>
-    <input name="forum_name" id="forum_name"
-      value="{{ request.form['forum_name'] or forum['forum_name'] }}" required>
-      <br>
-    <label for="forum_description">Description</label>
-    <textarea name="forum_description" id="forum_description">{{ request.form['description'] or forum['forum_description'] }}</textarea>
-    <br>
-    <input type="submit" value="Save">
+    <div class="mb-3">
+      <label class="form-label" for="forum_name">Forum Name</label>
+      <input class="form-control" name="forum_name" id="forum_name"
+        value="{{ request.form['forum_name'] or forum['forum_name'] }}" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="forum_description">Description</label>
+      <textarea class="form-control" name="forum_description" id="forum_description">{{ request.form['description'] or forum['forum_description'] }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="industry_id" class="form-label">Industry Name</label>
+      <select name="industry_id" id="industry_id" class="form-select">
+        request.form['industry_id']=<option selected value="{{forum.industry_id}}">{{ forum['industry_name'] }}</option>
+        {% for industry in industries %}
+          request.form['industry_id']=
+          <option name="industry_id" value="{{industry.industry_id}}">{{industry.industry_name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    
+    <input type="submit" class="btn btn-primary" value="Submit">   
   </form>
-  <hr>
-  <form action="{{ url_for('forums.delete', id=forum['forum_id']) }}" method="post">
-    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
-  </form>
+
 {% endblock %}
