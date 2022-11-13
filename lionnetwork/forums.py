@@ -15,15 +15,31 @@ def fetch_industries():
     return industries
 
 
-@forums.route('/')
+@forums.route('/', methods=('GET', 'POST'))
 def index():
-    forums = g.conn.execute(
-        'SELECT f.forum_id, f.forum_name, f.forum_description, f.columbia_uni, i.industry_name, f.hide_forum '
-        ' FROM forums f join industries i on f.industry_id = i.industry_id'
-        ' ORDER BY forum_name'
-    ).fetchall()
     session['forum_id'] = ""
-    return render_template('forums/index.html', forums=forums)
+    flag_search = False
+    if request.method == 'POST':
+        if ("forum_search" in request.form and request.form["forum_search"] != None):
+            flag_search = True
+            search_key = request.form['forum_search'].lower()
+            search_key = f"%{search_key}%"
+            forums = g.conn.execute(
+                'SELECT f.forum_id, f.forum_name, f.forum_description, f.columbia_uni, i.industry_name, f.hide_forum '
+                ' FROM forums f join industries i on f.industry_id = i.industry_id'
+                " WHERE lower(f.forum_name) like %s or "
+                " lower(f.forum_description) like %s "
+                " or lower(i.industry_name) like %s"
+                ' ORDER BY forum_name',
+                [search_key, search_key, search_key]
+            ).fetchall()
+    else:
+        forums = g.conn.execute(
+            'SELECT f.forum_id, f.forum_name, f.forum_description, f.columbia_uni, i.industry_name, f.hide_forum '
+            ' FROM forums f join industries i on f.industry_id = i.industry_id'
+            ' ORDER BY forum_name'
+        ).fetchall()
+    return render_template('forums/index.html', forums=forums, flag_search=flag_search)
 
 
 @forums.route('/create', methods=('GET', 'POST'))
@@ -35,7 +51,6 @@ def create():
         
         error = None
 
-        print(forum_name)
         industry_id = request.form['industry_id']
 
         if not forum_name:

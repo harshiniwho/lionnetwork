@@ -111,7 +111,6 @@ def comment(id):
 @posts.route('/<int:id>/comment/delete', methods=('POST',))
 @login_required
 def comment_delete(id):
-    print("in here?")
     comment = get_comment(id)
     g.conn.execute('DELETE FROM comments WHERE comment_id = %s', (id,))
     return redirect(url_for('posts.show', id=comment['post_id']))

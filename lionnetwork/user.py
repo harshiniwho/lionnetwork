@@ -5,7 +5,6 @@ user = Blueprint('user', __name__)
 @user.route('/home',  methods=('GET', 'POST'))
 def home():
     if request.method == "POST":
-        print(request.form['industry'])
         jobList = []
         return render_template('user/home.html', jobList = jobList)
 

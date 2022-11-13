@@ -7,6 +7,20 @@
 <a href="{{ url_for('forums.create')}}"><button type="button" class="btn btn-outline-primary me-2" style="float: right;">Create New Forum</button></a>
 {% endif %}
 <h5>Showing all forums</h5>
+  <form method="post" action="{{ url_for('forums.index') }}">
+    <div class="mb3">
+      <input name="forum_search" id="forum_search" value="{{ request.form['forum_search'] }}" class="form-control">
+    </div>
+    <div class="mb3">
+      <button type="submit" class="btn btn-primary" style="margin-top : 1%">Search!</button>
+    </div>
+    
+  </form>
+  {% if flag_search %}
+    <a href="{{ url_for('forums.index')}}">
+      <button class="btn btn-outline-primary" style="float: left; margin-left: 10%; margin-top: -2.8%">Clear Search</button>
+    </a>
+  {% endif %}
   <div class="container-fluid" style="margin-top: 2%;">
     <style>
       td,
