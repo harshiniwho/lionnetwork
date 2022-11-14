@@ -2,7 +2,12 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    {% if g.user.has_job_listings_access %}
+    {% if g.user.is_deactivated %}
+        <h5>Your Account is Deactivated</h5>
+        <form method="post" action="{{url_for('user.settings')}}">
+            <input type="submit" class="btn btn-primary" name="reactivate" value="Reactivate Account">
+        </form>
+    {% elif g.user.has_job_listings_access %}
         <style>
             td,
             tr {
@@ -54,14 +59,28 @@
         <br />
         <table class="table table-hover table-bordered">
             <thead>
-                <tr class = "table-primary">
-                    <th>Company</th>
-                    <th>Position</th>
-                    <th>Internship</th>
-                    <th>Visa Sponsored</th>
-                    <th>Deadline</th>
-                    <th>Application URL</th>
-                </tr>
+
+                {% if g.user.is_admin %}
+                    <tr class="table-primary">
+                        <th>Company</th>
+                        <th>Position</th>
+                        <th>Internship</th>
+                        <th>Visa Sponsored</th>
+                        <th>deadline</th>
+                        <th>Application URL</th>
+                        <th>Hide Listing</th>
+                        <th>Delete Listing</th>
+                    </tr>
+                {% else %}
+                    <tr class="table-primary">
+                        <th>Company</th>
+                        <th>Position</th>
+                        <th>Internship</th>
+                        <th>Visa Sponsored</th>
+                        <th>deadline</th>
+                        <th>Application URL</th>
+                    </tr>
+                {% endif %}
             </thead>
             <tbody>
                 {% for row in jobList %}
@@ -73,12 +92,70 @@
                             <td>{{row[3]}}</td>
                             <td>{{row[6]}}</td>
                             <td><a href="{{row[4]}}" target="_blank">Link</a></td>
+                            {% if g.user.is_admin %}
+                                <td>
+                                    <form action="{{url_for('user.modifyJob')}}" method="post">
+                                        <input type="submit" id = "hide" name="hide" value={{row[0]}} />
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="{{url_for('user.modifyJob')}}" method="post">
+                                        <input type="submit" name="delete" value={{row[0]}} />
+                                    </form>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endif %}
                 {% endfor %}
             </tbody>
         </table>
         <br />
+
+        {% if g.user.is_admin %}
+            <h5>Hidden Job Listings</h5>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-primary">
+                        <th>Company</th>
+                        <th>Position</th>
+                        <th>Internship</th>
+                        <th>Visa Sponsored</th>
+                        <th>deadline</th>
+                        <th>Application URL</th>
+                        <th>Show Listing</th>
+                        <th>Delete Listing</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in jobList %}
+                    {% if not row[7] %}
+                    <tr>
+                        <td>{{row[1]}}</td>
+                        <td>{{row[2]}}</td>
+                        <td>{{row[5]}}</td>
+                        <td>{{row[3]}}</td>
+                        <td>{{row[6]}}</td>
+                        <td><a href="{{row[4]}}">Link</a></td>
+                        {% if g.user.is_admin %}
+                        <td>
+                            <form action="{{url_for('user.modifyJob')}}" method="post">
+                                <input type="submit" id="hide" name="show" value={{row[0]}} />
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{url_for('user.modifyJob')}}" method="post">
+                                <input type="submit" name="delete" value={{row[0]}} />
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% endif %}
 
     {% else %}
         <div class = "container">

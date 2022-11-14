@@ -29,7 +29,7 @@
             <img src="{{url_for('static', filename='columbia_logo.png')}}" width="70" height="60" loading="lazy" />
         </a>
         </a>
-        {% if g.user %}
+        {% if g.user and not g.user.is_deactivated %}
           <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
             <li>
               <a href="{{ url_for('user.jobPosting')}}" class="nav-link link-secondary">Jobs</a>

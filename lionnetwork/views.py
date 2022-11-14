@@ -7,6 +7,10 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def index():
+
+    users = g.conn.execute('select * from users').fetchall()
+    print(users)
+
     if "columbia_uni" in session:
         return redirect(url_for('user.jobPosting'))
     else:
