@@ -12,7 +12,6 @@ def register():
         password = request.form['password']
         name = request.form['name']
         major = request.form['major']
-
         error = None
 
         if not columbia_uni:
@@ -43,12 +42,13 @@ def register():
                         [columbia_uni, generate_password_hash(password)],
                     )
 
-                return redirect(url_for("auth.login"))
+                flash(f"Created account {columbia_uni}", category="success")
 
             except Exception as e:
                 error = f"User {columbia_uni} is already registered."
+                flash(error, category="error")
 
-        flash(error, category="error")
+            return redirect(url_for("auth.login"))
 
     elif request.method == 'GET':
         return render_template('auth/register.html')
@@ -73,14 +73,14 @@ def login():
             session.clear()
             session['columbia_uni'] = user['columbia_uni']
             session['major'] = user['major']
-            # session['listing_access'] = user['has_job_listings_access']
-            session['listing_access'] = True
+            session['listing_access'] = user['has_job_listings_access']
             session['deactivated'] = user['is_deactivated']
             session['is_admin'] = user['is_admin']
             flash("Logged in Successfully!", category="success")
-            return redirect(url_for('user.home'))
+            return redirect(url_for('user.jobPosting'))
         else:
             flash(error, category="error")
+            return render_template('auth/login.html')
 
     elif request.method == 'GET':
         return render_template('auth/login.html')

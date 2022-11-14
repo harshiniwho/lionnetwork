@@ -2,5 +2,23 @@
 {% block title %}Payment{% endblock %}
 
 {% block content %}
-<p>Payment Page</p>
+<h5>Make Payment</h5>
+<form method="post" action="{{url_for('views.payment')}}">
+    <div class="input-group" style="width:350px;">
+        <span class="input-group-text">$</span>
+        <input type="text" class="form-control" id="amount" name="amount" placeholder="Amount in USD" required>
+    </div>
+    <div class="form-group mt-2" style="width:350px;">
+        <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="Card Number" required>
+    </div>
+    <div class="input-group mt-2" style="width:350px;">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
+    </div>
+    <div class="input-group mt-2" style="width:170px;">
+        <input type="text" class="form-control" id="cvc" name="cvc" placeholder="CVC" required>
+        <input type="text" class="form-control" id="exp" name="exp" placeholder="MM/YY" required>
+    </div>
+    <br />
+    <button class="btn btn-primary" name="delete">Process!</button>
+</form>
 {% endblock %}
