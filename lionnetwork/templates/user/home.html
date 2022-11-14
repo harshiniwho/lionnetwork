@@ -13,19 +13,12 @@
 
         <form method="post" action="{{url_for('user.jobPosting')}}">
             <div class="mb-3" style="width:300px;">
-                <label for="industry" class="form-label">Select your industry</label>
-                <select id="industry" name="industry" class="form-select">
-                    <option value="-1" selected>Select</option>
-                    <option value="1"> Software Engineering</option>
-                    <option value="2">Product Management</option>
-                    <option value="3">Data Science</option>
-                    <option value="4">Finance</option>
-                    <option value="5">Consulting</option>
-                    <option value="6">Architecture</option>
-                    <option value="7">Marketing</option>
-                    <option value="8">Human Resource Management</option>
-                    <option value="9">Journalism</option>
-                    <option value="10">Military and Govenment</option>
+                <label for="industry_id" class="form-label">Select your industry</label>
+                <select id="industry_id" name="industry_id" class="form-select">
+                    {% for industry in industries %}
+                    request.form['industry_id']=
+                    <option name="industry_id" value="{{industry.industry_id}}">{{industry.industry_name}}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="mb-3">
@@ -66,7 +59,7 @@
                     <th>Position</th>
                     <th>Internship</th>
                     <th>Visa Sponsored</th>
-                    <th>deadline</th>
+                    <th>Deadline</th>
                     <th>Application URL</th>
                 </tr>
             </thead>
@@ -79,7 +72,7 @@
                             <td>{{row[5]}}</td>
                             <td>{{row[3]}}</td>
                             <td>{{row[6]}}</td>
-                            <td><a href="{{row[4]}}">Link</a></td>
+                            <td><a href="{{row[4]}}" target="_blank">Link</a></td>
                         </tr>
                     {% endif %}
                 {% endfor %}

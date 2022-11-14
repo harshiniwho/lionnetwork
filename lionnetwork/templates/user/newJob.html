@@ -14,7 +14,7 @@
         </div>
         <br />
         <div class="form-group" style="width:350px;">
-            <input type="text" class="form-control" id="app_url" name="app_url" placeholder="Application URL">
+            <input type="text" class="form-control" id="app_url" name="app_url" placeholder="Application URL" required>
         </div>
         <br />
         <div class="mb-3" style="width:300px;">
@@ -32,6 +32,12 @@
                 <option value="10">Military and Govenment</option>
             </select>
         </div>
+        <div class="mb3" style="width:300px;">
+            <label class="form-label" for="deadline">Deadline</label>
+            <input type="datetime-local" class="form-control" id="deadline"
+                name="deadline">
+        </div>
+        <br>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="checkbox" id="internship" name="internship">
             <label class="form-check-label" for="internship">
