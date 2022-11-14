@@ -2,10 +2,12 @@ from flask import (Blueprint, render_template, redirect, request, session, url_f
 from sqlalchemy.sql import text
 import uuid
 from .utils import processQuery
+from lionnetwork.auth import login_required
 
 user = Blueprint('user', __name__)
 
 @user.route('/admin', methods = ["GET", "POST"])
+@login_required
 def adminSettings():
     print("Called")
     if request.method == "POST" and g.user.is_admin:
@@ -55,14 +57,19 @@ def modifyJob():
     else:
         return redirect(url_for('user.jobPosting'))
 
+def fetch_industries():
+    industries = g.conn.execute('SELECT * FROM industries').fetchall()
+    return industries
+
 @user.route('/home',  methods=('GET', 'POST'))
+@login_required
 def jobPosting():
     if request.method == "POST":
         jobList = []; params = {}
         params['int'] = False; params['visa'] = False
         session['int'] = False; session['visa'] = False
         params['ind'] = int(request.form['industry'])
-
+        
         if "internship" in request.form.keys():
             session['int'] = True
             params['int'] = True
@@ -76,7 +83,7 @@ def jobPosting():
             jobList = g.conn.execute(text(sql), params).fetchall()
             session['ind'] = g.conn.execute(text(sqlGetName), {"id_": params['ind']}).fetchone()[0]
 
-        return render_template('user/home.html', jobList = jobList)
+        return render_template('user/home.html', jobList = jobList, industries=fetch_industries())
 
     elif request.method == "GET":
         if "columbia_uni" in session and session['listing_access']:
@@ -84,11 +91,12 @@ def jobPosting():
             session['ind'] = "All industries"
             session['int'] = False
             session['visa'] = False
-            return render_template('user/home.html', jobList = jobList)
+            return render_template('user/home.html', jobList = jobList, industries=fetch_industries())
         else:
-            return render_template('user/home.html')
+            return render_template('user/home.html', industries=fetch_industries())
 
 @user.route('/settings', methods=('GET', 'POST'))
+@login_required
 def settings():
     if request.method == "GET":
         return render_template('user/settings.html')
@@ -155,6 +163,7 @@ def settings():
 
 
 @user.route('/addJob', methods=('GET', 'POST'))
+@login_required
 def addJob():
     if request.method == "GET":
         return render_template('user/newJob.html')
@@ -170,8 +179,9 @@ def addJob():
         params['visa'] = True if "visa" in request.form.keys() else False
         params['show'] = True
         params['ind_id'] = int(request.form['industry'])
+        params['deadline'] =request.form['deadline']
 
-        sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id)"
+        sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id, deadline) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id, :deadline)"
         try:
             g.conn.execute(text(sql), params)
             flash(f"{params['job_title']} added!", category="success")

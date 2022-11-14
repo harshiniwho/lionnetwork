@@ -1,6 +1,7 @@
 from flask import (Blueprint, render_template, redirect, request, session, url_for, flash, g, make_response)
 from sqlalchemy.sql import text
 import uuid
+from lionnetwork.auth import login_required
 
 views = Blueprint('views', __name__)
 
@@ -16,6 +17,7 @@ def index():
         return render_template("index.html")
 
 @views.route('/payment', methods = ["GET", "POST"])
+@login_required
 def payment():
     if request.method == "POST":
         params = {}

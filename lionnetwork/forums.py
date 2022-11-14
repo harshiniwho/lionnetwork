@@ -16,6 +16,7 @@ def fetch_industries():
 
 
 @forums.route('/', methods=('GET', 'POST'))
+@login_required
 def index():
     session['forum_id'] = ""
     flag_search = False
