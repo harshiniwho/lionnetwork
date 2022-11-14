@@ -11,8 +11,17 @@
             <label for="uni" class="form-label">Enter Columbia UNI to uprgrade to Admin</label>
             <input type="text" class="form-control" id="uni" name="uni" placeholder="Columbia Uni">
         </div>
-
+        <br />
+        <button type = "submit" class="btn btn-primary">Upgrade User</button>
+        <br />
+        <div class="form-group mt-2" style="width:350px;">
+            <label for="uni" class="form-label">Create New Industry</label>
+            <input type="text" class="form-control" id="ind" name="ind" placeholder="Industry Name">
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary">Add New Industry</button>
     </form>
+
 {% else %}
     <h5>{{session['columbia_uni']}} Account Settings</h5>
     <h7>Job Listing Access: <strong>{{g.user.has_job_listings_access}}</strong></h7>
@@ -27,8 +36,8 @@
         <br />
         <h6>Unhappy?</h6>
         <span style="display: inline;">
-            <button class="btn btn-primary btn-danger" name="delete">Delete Account</button>
-            <button class="btn btn-primary btn-warning" name="deactivate">Deactivate Account</button>
+            <input type="submit" class="btn btn-primary btn-danger"  name="delete" value="Delete Account">
+            <input type="submit" class="btn btn-primary btn-warning" name="deactivate" value="Deactivate Account">
         </span>
     </form>
 
