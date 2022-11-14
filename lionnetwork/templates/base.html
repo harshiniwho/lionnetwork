@@ -32,7 +32,7 @@
         {% if g.user %}
           <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
             <li>
-              <a href="{{ url_for('user.home')}}" class="nav-link link-secondary">Home</a>
+              <a href="{{ url_for('user.jobPosting')}}" class="nav-link link-secondary">Jobs</a>
             </li>
             <li>
               <a href="{{ url_for('forums.index')}}" class="nav-link link-secondary">Forum</a>
@@ -78,7 +78,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="container fixed-bottom">
+    <div class="container">
       <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
         <div class="col-md-4 d-flex align-items-center">
           <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
