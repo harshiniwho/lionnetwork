@@ -13,7 +13,7 @@ def fetch_non_admins():
 
 
 def fetch_payments():
-    payments = g.conn.execute("SELECT payment_id, amount, columbia_uni, to_char(payment_timestamp, 'Day DD Mon YYYY') as payment_timestamp  from payments")
+    payments = g.conn.execute("SELECT payment_id, amount, columbia_uni, to_char(payment_timestamp, 'Day DD Mon YYYY HH:MM:ss') as payment_timestamp  from payments")
     return payments
 
 
@@ -41,6 +41,7 @@ def adminSettings():
     else:
         return render_template('user/settings.html', users=fetch_non_admins(), payments=fetch_payments())
 
+
 @user.route('/modifyJob', methods = ["GET", "POST"])
 def modifyJob():
     if request.method == "POST" and g.user.is_admin:
@@ -67,13 +68,16 @@ def modifyJob():
     else:
         return redirect(url_for('user.jobPosting'))
 
+
 def fetch_industries():
     industries = g.conn.execute('SELECT * FROM industries').fetchall()
     return industries
 
+
 def fetch_industry_name(industry_id):
     industry_name = g.conn.execute('SELECT industry_name from industries WHERE industry_id = %s', [industry_id]).fetchone()
     return industry_name
+
 
 @user.route('/home',  methods=('GET', 'POST'))
 @login_required
@@ -112,9 +116,11 @@ def jobPosting():
         else:
             return render_template('user/home.html', industries=fetch_industries(), industry_id=-1, industry_name='')
 
+
 @user.route('/settings', methods=('GET', 'POST'))
 @login_required
 def settings():
+    session['order_by'] = False
     if request.method == "GET":
         return render_template('user/settings.html', users=fetch_non_admins(), payments=fetch_payments())
 
@@ -130,6 +136,8 @@ def settings():
         if params['delete']:
             sqlRemove = 'delete from users where columbia_uni = :uni'
             try:
+                g.conn.execute('delete from comments where columbia_uni = %s', (g.user.columbia_uni,))
+                g.conn.execute('delete from posts where columbia_uni = %s', (g.user.columbia_uni,))
                 g.conn.execute(text(sqlRemove), params)
                 flash("Successfully deleted your account.", category = "success")
                 return redirect(url_for('auth.logout'))

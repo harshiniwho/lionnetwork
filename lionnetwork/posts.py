@@ -22,12 +22,19 @@ def get_forum(id):
     return forum['forum_name']
 
 
-@posts.route('/<int:id>', methods=('GET',))
+@posts.route('/<int:id>', methods=('GET', 'POST'))
 @login_required
 def index(id):
     forum_name = get_forum(id)
     session['forum_id'] = id
-    posts = g.conn.execute("SELECT p.post_id, p.post_text, to_char(timestamp_posted, 'Day DD Mon YYYY') as timestamp_posted, p.columbia_uni, f.forum_id, f.forum_name FROM posts p JOIN forums f on p.forum_id = f.forum_id WHERE f.forum_id = %s", (id,)).fetchall()
+    session['order_by'] = False
+    if "order_by" in request.form:
+        order_by = request.form['order_by']
+        if order_by != None and order_by != '':
+            session['order_by'] = True
+            posts = g.conn.execute("SELECT p.post_id, p.post_text, to_char(timestamp_posted, 'Day DD Mon YYYY HH:MM:ss') as timestamp_posted, p.columbia_uni, f.forum_id, f.forum_name FROM posts p JOIN forums f on p.forum_id = f.forum_id WHERE f.forum_id = %s ORDER BY p.timestamp_posted desc", (id,)).fetchall()
+    else:
+        posts = g.conn.execute("SELECT p.post_id, p.post_text, to_char(timestamp_posted, 'Day DD Mon YYYY HH:MM:ss') as timestamp_posted, p.columbia_uni, f.forum_id, f.forum_name FROM posts p JOIN forums f on p.forum_id = f.forum_id WHERE f.forum_id = %s", (id,)).fetchall()
     
     return render_template('posts/index.html', posts=posts, forum_name=forum_name)
 

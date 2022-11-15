@@ -39,10 +39,7 @@
             <thead>
                 <tr class="table-primary">
                     <th>
-                        Payment ID
-                    </th>
-                    <th>
-                        Amount
+                        Amount (in USD)
                     </th>
                     <th>
                         Columbia UNI
@@ -55,9 +52,6 @@
           <tbody>
             {% for payment in payments %}
                 <tr >
-                    <td>
-                        {{payment.payment_id}}
-                    </td>
                     <td>
                         {{payment.amount}}
                     </td>
