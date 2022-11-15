@@ -188,7 +188,10 @@ def addJob():
         params['ind_id'] = int(request.form['industry'])
         params['deadline'] = request.form['deadline']
 
-        sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id, deadline) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id, :deadline)"
+        if params['deadline'] != None and params['deadline'] != '':
+            sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id, deadline) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id, :deadline)"
+        else:
+            sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id)"
         try:
             g.conn.execute(text(sql), params)
             flash(f"{params['job_title']} added!", category="success")
