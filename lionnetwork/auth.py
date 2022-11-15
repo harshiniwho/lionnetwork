@@ -47,6 +47,7 @@ def register():
             except Exception as e:
                 error = f"User {columbia_uni} is already registered."
                 flash(error, category="error")
+                return redirect(url_for("auth.register"))
 
             return redirect(url_for("auth.login"))
 

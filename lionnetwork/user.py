@@ -179,6 +179,21 @@ def settings():
         return redirect(request.url)
 
 
+@user.route('/update', methods=('POST',))
+@login_required
+def update():
+    new_name = request.form['name']
+    new_major = request.form['major']
+
+    if new_name != None and new_name != '':
+        g.conn.execute('UPDATE users SET name = %s WHERE columbia_uni = %s', (new_name, g.user["columbia_uni"]))
+
+    if new_major != None and new_major != '':
+        g.conn.execute('UPDATE users SET major = %s WHERE columbia_uni = %s', (new_major, g.user["columbia_uni"]))
+    
+    return redirect(url_for('user.settings'))
+
+
 @user.route('/addJob', methods=('GET', 'POST'))
 @login_required
 def addJob():
