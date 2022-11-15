@@ -26,7 +26,7 @@
         <button type="submit" class="btn btn-primary">Add New Industry</button>
     </form>
     <br>
-    <h5>List of Payments</h5>
+    <h5>Payment History</h5>
     <div class="container-fluid" style="margin-top: 2%;">
         <style>
           td,
@@ -77,15 +77,23 @@
 {% else %}
     <h5>{{session['columbia_uni']}} Account Settings</h5>
     <h7>Job Listing Access: <strong>{{g.user.has_job_listings_access}}</strong></h7>
-    <form method="post" action="{{url_for('user.settings')}}">
+    <form method="post" action="{{url_for('user.update')}}">
         <div class="form-group mt-2" style="width:350px;">
-            <input type="text" class="form-control" id="name" name="name" placeholder="Update Name">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="{{g.user.name}}">
         </div>
         <br />
         <div class="form-group" style="width:350px;">
-            <input type="text" class="form-control" id="major" name="major" placeholder="Update Major">
+            <label for="major" class="form-label">Major</label>
+            <input type="text" class="form-control" id="major" name="major" placeholder="{{g.user.major}}">
         </div>
-        <br />
+        <br>
+        <button class="btn btn-primary" type="submit">
+            Update Details
+        </button>
+    </form>
+    <br>
+    <form method="post" action="{{url_for('user.settings')}}">
         <h6>Unhappy?</h6>
         <span style="display: inline;">
             <input type="submit" class="btn btn-primary btn-danger"  name="delete" value="Delete Account">
