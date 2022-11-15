@@ -25,17 +25,17 @@ def adminSettings():
         params['uni'] = request.form['uni']
         params['new_ind'] = request.form['ind']
 
-        if len(params['uni']) > 0:
-            params['admin'] = True
-            sql = 'update users set is_admin = :admin where columbia_uni = :uni'
-            flash(f"Successfully upgraded {params['uni']} to admin.", category = "success") if processQuery(sql, params) else flash(f"Could not upgrade {params['uni']} to admin...", category = "error")
-
-        elif len(params['new_ind']) > 0:
+        if len(params['new_ind']) > 0:
             params['uni'] = session['columbia_uni']
             params['new_id'] = int(str(uuid.uuid4().int)[:5])
 
             sql = 'insert into industries (industry_id, industry_name, columbia_uni) values (:new_id, :new_ind, :uni)'
             flash(f"Successfully added {params['new_ind']}.", category = "success") if processQuery(sql, params) else flash(f"Could not add {params['new_ind']}...", category = "error")
+    
+        elif len(params['uni']) > 0:
+            params['admin'] = True
+            sql = 'update users set is_admin = :admin where columbia_uni = :uni'
+            flash(f"Successfully upgraded {params['uni']} to admin.", category = "success") if processQuery(sql, params) else flash(f"Could not upgrade {params['uni']} to admin...", category = "error")
 
         return redirect(request.url)
     else:

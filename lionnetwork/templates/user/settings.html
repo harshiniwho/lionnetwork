@@ -9,7 +9,8 @@
     <form method="post" action="{{url_for('user.adminSettings')}}">
         <div class="mb-3" style="width:300px;">
             <label for="uni" class="form-label">Pick Columbia UNI to upgrade to Admin</label>
-            <select id="uni" name="uni" class="form-select">
+            <select id="uni" name="uni" class="form-select" >
+                <option value="" selected></option>
                 {% for user in users %}
                 request.form['uni']=
                 <option name="uni" value="{{user.columbia_uni}}">{{user.columbia_uni}}</option>
