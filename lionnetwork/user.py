@@ -11,6 +11,12 @@ def fetch_non_admins():
     users = g.conn.execute('SELECT * from users where is_admin = False')
     return users
 
+
+def fetch_payments():
+    payments = g.conn.execute("SELECT payment_id, amount, columbia_uni, to_char(payment_timestamp, 'Day DD Mon YYYY') as payment_timestamp  from payments")
+    return payments
+
+
 @user.route('/admin', methods = ["GET", "POST"])
 @login_required
 def adminSettings():
@@ -33,7 +39,7 @@ def adminSettings():
 
         return redirect(request.url)
     else:
-        return render_template('user/settings.html', users=fetch_non_admins())
+        return render_template('user/settings.html', users=fetch_non_admins(), payments=fetch_payments())
 
 @user.route('/modifyJob', methods = ["GET", "POST"])
 def modifyJob():
@@ -110,7 +116,7 @@ def jobPosting():
 @login_required
 def settings():
     if request.method == "GET":
-        return render_template('user/settings.html', users=fetch_non_admins())
+        return render_template('user/settings.html', users=fetch_non_admins(), payments=fetch_payments())
 
     elif request.method == "POST" and g.user:
         params = {}

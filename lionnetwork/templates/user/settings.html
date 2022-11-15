@@ -25,6 +25,54 @@
         <br />
         <button type="submit" class="btn btn-primary">Add New Industry</button>
     </form>
+    <br>
+    <h5>List of Payments</h5>
+    <div class="container-fluid" style="margin-top: 2%;">
+        <style>
+          td,
+          tr {
+              text-align: start;
+              vertical-align: middle;
+          }
+        </style>
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-primary">
+                    <th>
+                        Payment ID
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Columbia UNI
+                    </th>
+                    <th>
+                        Payment Date
+                    </th>
+                </tr>
+            </thead>
+          <tbody>
+            {% for payment in payments %}
+                <tr >
+                    <td>
+                        {{payment.payment_id}}
+                    </td>
+                    <td>
+                        {{payment.amount}}
+                    </td>
+                    <td>
+                        {{payment.columbia_uni}}
+                    </td>
+                    <td>
+                        {{payment.payment_timestamp}}
+                    </td>
+                </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
 
 {% else %}
     <h5>{{session['columbia_uni']}} Account Settings</h5>
