@@ -42,6 +42,18 @@ def adminSettings():
         return render_template('user/settings.html', users=fetch_non_admins(), payments=fetch_payments())
 
 
+@user.route('/industry', methods = ["GET", "POST"])
+@login_required
+def newIndustry():
+    if request.method == "POST" and g.user.is_admin:
+        params = {}
+        params['uni'] = session['columbia_uni']
+        params['new_id'] = int(str(uuid.uuid4().int)[:5])
+        sql = 'insert into industries (industry_id, industry_name, columbia_uni) values (:new_id, :new_ind, :uni)'
+        flash(f"Successfully added {params['new_ind']}.", category = "success") if processQuery(sql, params) else flash(f"Could not add {params['new_ind']}...", category = "error")
+    return redirect(request.url)
+
+
 @user.route('/modifyJob', methods = ["GET", "POST"])
 def modifyJob():
     if request.method == "POST" and g.user.is_admin:
