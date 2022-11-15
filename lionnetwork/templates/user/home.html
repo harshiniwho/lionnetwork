@@ -20,7 +20,9 @@
             <div class="mb-3" style="width:300px;">
                 <label for="industry_id" class="form-label">Select your industry</label>
                 <select id="industry_id" name="industry_id" class="form-select">
-                    request.form['industry_id']=<option selected value="{{industry_id}}">{{industry_name}}</option>
+                    {% if industry_id != -1 %}
+                        request.form['industry_id']=<option selected value="{{industry_id}}">{{industry_name}}</option>
+                    {% endif %}
                     {% for industry in industries %}
                     request.form['industry_id']=
                     <option name="industry_id" value="{{industry.industry_id}}">{{industry.industry_name}}</option>

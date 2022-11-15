@@ -7,11 +7,15 @@
     <h5>{{session['columbia_uni']}} Admin Settings</h5>
     <br />
     <form method="post" action="{{url_for('user.adminSettings')}}">
-        <div class="form-group mt-2" style="width:350px;">
-            <label for="uni" class="form-label">Enter Columbia UNI to uprgrade to Admin</label>
-            <input type="text" class="form-control" id="uni" name="uni" placeholder="Columbia Uni">
+        <div class="mb-3" style="width:300px;">
+            <label for="uni" class="form-label">Pick Columbia UNI to upgrade to Admin</label>
+            <select id="uni" name="uni" class="form-select">
+                {% for user in users %}
+                request.form['uni']=
+                <option name="uni" value="{{user.columbia_uni}}">{{user.columbia_uni}}</option>
+                {% endfor %}
+            </select>
         </div>
-        <br />
         <button type = "submit" class="btn btn-primary">Upgrade User</button>
         <br />
         <div class="form-group mt-2" style="width:350px;">
