@@ -6,10 +6,14 @@ from lionnetwork.auth import login_required
 
 user = Blueprint('user', __name__)
 
+
+def fetch_non_admins():
+    users = g.conn.execute('SELECT * from users where is_admin = False')
+    return users
+
 @user.route('/admin', methods = ["GET", "POST"])
 @login_required
 def adminSettings():
-    print("Called")
     if request.method == "POST" and g.user.is_admin:
         params = {}
         params['uni'] = request.form['uni']
@@ -29,7 +33,7 @@ def adminSettings():
 
         return redirect(request.url)
     else:
-        return render_template('user/settings.html')
+        return render_template('user/settings.html', users=fetch_non_admins())
 
 @user.route('/modifyJob', methods = ["GET", "POST"])
 def modifyJob():
@@ -98,15 +102,15 @@ def jobPosting():
             session['ind'] = "All industries"
             session['int'] = False
             session['visa'] = False
-            return render_template('user/home.html', jobList = jobList, industries=fetch_industries(), industry_id=1, industry_name=fetch_industry_name(1)[0])
+            return render_template('user/home.html', jobList = jobList, industries=fetch_industries(), industry_id=-1, industry_name='')
         else:
-            return render_template('user/home.html', industries=fetch_industries(), industry_id=1, industry_name=fetch_industry_name(1)[0])
+            return render_template('user/home.html', industries=fetch_industries(), industry_id=-1, industry_name='')
 
 @user.route('/settings', methods=('GET', 'POST'))
 @login_required
 def settings():
     if request.method == "GET":
-        return render_template('user/settings.html')
+        return render_template('user/settings.html', users=fetch_non_admins())
 
     elif request.method == "POST" and g.user:
         params = {}
