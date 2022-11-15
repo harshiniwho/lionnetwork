@@ -61,6 +61,10 @@ def fetch_industries():
     industries = g.conn.execute('SELECT * FROM industries').fetchall()
     return industries
 
+def fetch_industry_name(industry_id):
+    industry_name = g.conn.execute('SELECT industry_name from industries WHERE industry_id = %s', [industry_id]).fetchone()
+    return industry_name
+
 @user.route('/home',  methods=('GET', 'POST'))
 @login_required
 def jobPosting():
@@ -68,14 +72,16 @@ def jobPosting():
         jobList = []; params = {}
         params['int'] = False; params['visa'] = False
         session['int'] = False; session['visa'] = False
-        params['ind'] = int(request.form['industry'])
-        
+        industry_id = 1
+        params['ind'] = int(request.form['industry_id'])
         if "internship" in request.form.keys():
             session['int'] = True
             params['int'] = True
         if "visa" in request.form.keys():
             session['visa'] = True
             params['visa'] = True
+        if "industry_id" in request.form.keys():
+            industry_id = int(request.form['industry_id'])
 
         sql = 'SELECT * FROM job_listings WHERE industry_id = :ind and is_internship = :int and is_visa_sponsored = :visa'
         sqlGetName = 'SELECT industry_name FROM industries WHERE industry_id=:id_'
@@ -83,7 +89,8 @@ def jobPosting():
             jobList = g.conn.execute(text(sql), params).fetchall()
             session['ind'] = g.conn.execute(text(sqlGetName), {"id_": params['ind']}).fetchone()[0]
 
-        return render_template('user/home.html', jobList = jobList, industries=fetch_industries())
+
+        return render_template('user/home.html', jobList = jobList, industries=fetch_industries(), industry_id=industry_id, industry_name=fetch_industry_name(industry_id)[0])
 
     elif request.method == "GET":
         if "columbia_uni" in session and session['listing_access']:
@@ -91,9 +98,9 @@ def jobPosting():
             session['ind'] = "All industries"
             session['int'] = False
             session['visa'] = False
-            return render_template('user/home.html', jobList = jobList, industries=fetch_industries())
+            return render_template('user/home.html', jobList = jobList, industries=fetch_industries(), industry_id=1, industry_name=fetch_industry_name(1)[0])
         else:
-            return render_template('user/home.html', industries=fetch_industries())
+            return render_template('user/home.html', industries=fetch_industries(), industry_id=1, industry_name=fetch_industry_name(1)[0])
 
 @user.route('/settings', methods=('GET', 'POST'))
 @login_required
@@ -166,7 +173,7 @@ def settings():
 @login_required
 def addJob():
     if request.method == "GET":
-        return render_template('user/newJob.html')
+        return render_template('user/newJob.html', industries=fetch_industries())
     elif request.method == "POST":
         params = {}
 
@@ -179,9 +186,12 @@ def addJob():
         params['visa'] = True if "visa" in request.form.keys() else False
         params['show'] = True
         params['ind_id'] = int(request.form['industry'])
-        params['deadline'] =request.form['deadline']
+        params['deadline'] = request.form['deadline']
 
-        sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id, deadline) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id, :deadline)"
+        if params['deadline'] != None and params['deadline'] != '':
+            sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id, deadline) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id, :deadline)"
+        else:
+            sql = "insert into job_listings (listing_id, company_name, position_name, is_visa_sponsored, application_url, is_internship, show_listing, columbia_uni, industry_id) values (:jid, :comp_name, :job_title, :visa, :app_url, :int_, :show, :uni, :ind_id)"
         try:
             g.conn.execute(text(sql), params)
             flash(f"{params['job_title']} added!", category="success")
@@ -190,8 +200,3 @@ def addJob():
             print(e)
             flash("Could not Add Job... Please try again.", category="error")
             return redirect(request.url)
-
-
-
-
-
