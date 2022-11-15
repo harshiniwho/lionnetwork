@@ -20,16 +20,10 @@
         <div class="mb-3" style="width:300px;">
             <label for="industry" class="form-label">Select industry</label>
             <select id="industry" name="industry" class="form-select">
-                <option value="1"> Software Engineering</option>
-                <option value="2">Product Management</option>
-                <option value="3">Data Science</option>
-                <option value="4">Finance</option>
-                <option value="5">Consulting</option>
-                <option value="6">Architecture</option>
-                <option value="7">Marketing</option>
-                <option value="8">Human Resource Management</option>
-                <option value="9">Journalism</option>
-                <option value="10">Military and Govenment</option>
+                {% for industry in industries %}
+                    request.form['industry_id']=
+                    <option name="industry_id" value="{{industry.industry_id}}">{{industry.industry_name}}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="mb3" style="width:300px;">
